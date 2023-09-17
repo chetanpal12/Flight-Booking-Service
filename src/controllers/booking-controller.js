@@ -9,6 +9,7 @@ async function createBooking(req,res){
             userId:req.body.userId,
             noofSeats:req.body.noofSeats
         });
+        
         SuccessResponce.data=responce;
         return res.status(StatusCodes.OK).json({SuccessResponce});
     } catch (error) {

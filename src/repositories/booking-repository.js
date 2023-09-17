@@ -7,6 +7,11 @@ class BookingRepository extends CrudRepository{
     constructor(){
         super(Booking)
     }
+
+    async createBooking(data,transaction){
+        const responce=await Booking.create(data,{transaction:transaction});
+        return responce;
+    }
 }
 
 module.exports= BookingRepository;
