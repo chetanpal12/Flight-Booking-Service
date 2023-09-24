@@ -47,11 +47,11 @@ async function makePayment(data){
         //console.log("not comes here")
         const bookingTime=new Date(bookingDetails.createdAt);
         const currentTime=new Date();
-
+//here we implemented a feature in which we have to do payment in 5 minutes if we did't do the payment in 5 min then it check that if the payment time is more than 5 min than update the status to cancelled from initiated.
         if(currentTime-bookingTime>300000){
-            //console.log("time is",currentTime-bookingTime)
-            await cancelBooking(data.bookingId);
-            //console.log(cancelBooking)
+            
+            await cancelBooking(data.bookingId);// this is done by cancel booking
+            
             throw new AppError('The booking has expired',StatusCodes.BAD_REQUEST);
         }
 
@@ -74,7 +74,7 @@ async function makePayment(data){
     }
 }
 
-async function cancelBooking(bookingId){
+async function cancelBooking(bookingId){//check in 5 min the payment happens or not after the creation of payment if do not then update status 
     const transaction= await db.sequelize.transaction();
     try {
         const bookingDetails=await bookingRepository.get(bookingId,transaction);
@@ -94,8 +94,20 @@ async function cancelBooking(bookingId){
     }
 }
 
+async function cancelOldBookings() {
+    try {
+        console.log("Inside service")
+        const time = new Date( Date.now() - 1000 * 300 ); // time 5 mins ago
+        const response = await bookingRepository.cancelOldBookings(time);
+
+        return response;
+    } catch(error) {
+        console.log(error);
+    }
+}
 
 module.exports={
     createBooking,
-    makePayment
+    makePayment,
+    cancelOldBookings
 }

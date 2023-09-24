@@ -2,7 +2,9 @@ const {StatusCodes}=require('http-status-codes');
 
 const {Booking}=require('../models');
 const CrudRepository=require('./crud-repository');
-
+const { Op } = require("sequelize");
+const {Enums} = require('../utils/common');
+const { CANCELLED, BOOKED } = Enums.BOOKING_STATUS;
 class BookingRepository extends CrudRepository{
     constructor(){
         super(Booking)
@@ -12,9 +14,9 @@ class BookingRepository extends CrudRepository{
         const responce=await Booking.create(data,{transaction:transaction});
         return responce;
     }
-
+//instead of this.model you can use "Booking"
     async get(data,transaction){
-        const responce=await this.model.findByPk(data,{transaction:transaction});
+        const responce=await Booking.findByPk(data,{transaction:transaction});
         if(!responce){
             throw new AppError('Not able to find the resource',StatusCodes.NOT_FOUND)
         }
@@ -34,6 +36,32 @@ class BookingRepository extends CrudRepository{
         
     }
 
+    async cancelOldBookings(timestamp) {
+        console.log("in repo")
+        const response = await Booking.update({status: CANCELLED},{
+            where: {
+                [Op.and]: [
+                    {
+                        createdAt: {
+                            [Op.lt]: timestamp
+                        }
+                    }, 
+                    {
+                        status: {
+                            [Op.ne]: BOOKED
+                        }
+                    },
+                    {
+                        status: {
+                            [Op.ne]: CANCELLED
+                        }
+                    }
+                ]
+
+            }
+        });
+        return response;
+    }
 }
 
 module.exports= BookingRepository;
