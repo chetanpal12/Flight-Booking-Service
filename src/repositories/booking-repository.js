@@ -18,6 +18,7 @@ class BookingRepository extends CrudRepository{
         if(!responce){
             throw new AppError('Not able to find the resource',StatusCodes.NOT_FOUND)
         }
+        //console.log("booking-repository",responce)
         return responce;
         
     }

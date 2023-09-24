@@ -27,12 +27,13 @@ async function makePayment(req,res){
             userId:req.body.userId,
             bookingId:req.body.bookingId
         });
-        
+        //console.log(responce)
         SuccessResponce.data=responce;
         return res.status(StatusCodes.OK).json({SuccessResponce});
     } catch (error) {
+        //console.log("coming here-booking controler- error")
         ErrorResponce.error=error;
-        console.log(error)
+        //console.log("The error is booking-controller",error)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ErrorResponce});
     }
 }
