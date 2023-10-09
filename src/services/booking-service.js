@@ -36,6 +36,7 @@ async function createBooking(data){
 
 async function makePayment(data){
     //console.log("booking services-data",data)
+    
     const transaction=await db.sequelize.transaction();
     try {
         const bookingDetails=await bookingRepository.get(data.bookingId,transaction);
